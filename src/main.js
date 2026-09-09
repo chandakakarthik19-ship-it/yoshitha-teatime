@@ -13,7 +13,7 @@ const fallbackDashboard = {
 
 const currency = (value) => `₹${Math.abs(value).toLocaleString('en-IN')}`
 const signedCurrency = (value) => `${value < 0 ? '-' : ''}${currency(value)}`
-const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:3001'
+const apiUrl = import.meta.env.VITE_API_URL || ''
 const fallbackUsers = [{ name: 'Ravi Kumar', mobile: '9876543210' }, { name: 'Meera Shah', mobile: '9876543211' }, { name: 'Arjun Rao', mobile: '9876543212' }]
 let menuItems = [
   { category: 'Tea', name: 'Dum tea', price: 10 }, { category: 'Tea', name: 'Black tea', price: 15 }, { category: 'Tea', name: 'Badam tea', price: 20 }, { category: 'Tea', name: 'Green tea', price: 20 }, { category: 'Tea', name: 'Masala tea', price: 20 }, { category: 'Tea', name: 'Lemon tea', price: 20 }, { category: 'Tea', name: 'Ginger tea', price: 20 }, { category: 'Tea', name: 'Ginger+lemon tea', price: 20 }, { category: 'Tea', name: 'Bellam tea', price: 20 }, { category: 'Tea', name: 'Ginger+bellam tea', price: 20 }, { category: 'Tea', name: 'Pepper tea', price: 20 }, { category: 'Tea', name: 'Elaichi tea', price: 20 }, { category: 'Tea', name: 'Sugar less tea', price: 15 }, { category: 'Tea', name: 'Immunity tea', price: 20 },

@@ -3,9 +3,12 @@ import express from 'express'
 import cors from 'cors'
 import { MongoClient, ObjectId } from 'mongodb'
 import { randomBytes, randomUUID, scryptSync, timingSafeEqual } from 'node:crypto'
+import path from 'node:path'
+import { fileURLToPath } from 'node:url'
 
 const app = express()
 const port = Number(process.env.PORT || 3001)
+const projectRoot = path.dirname(fileURLToPath(import.meta.url))
 const mongoClient = new MongoClient(process.env.MONGODB_URI, { maxPoolSize: 10, serverSelectionTimeoutMS: 5000 })
 let databasePromise
 const sessions = new Map()
@@ -17,6 +20,9 @@ function getDatabase() {
 
 app.use(cors())
 app.use(express.json())
+app.use(express.static(path.join(projectRoot, '../dist')))
+
+app.get('/', (_request, response) => response.sendFile(path.join(projectRoot, '../dist/index.html')))
 
 function requireRole(role) {
   return (request, response, next) => {
