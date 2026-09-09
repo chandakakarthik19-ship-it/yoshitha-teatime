@@ -30,6 +30,14 @@ let activeUser = null
 let userKhataEntries = []
 let adminToken = null
 
+function normalizeDashboard(data) {
+  return {
+    overview: { ...fallbackDashboard.overview, ...(data?.overview || {}) },
+    khata: Array.isArray(data?.khata) ? data.khata : [],
+    recent: Array.isArray(data?.recent) ? data.recent : [],
+  }
+}
+
 function recalculateProfit() {
   dashboard.overview.profit = dashboard.overview.income - dashboard.overview.expenses
 }
@@ -44,7 +52,7 @@ function render() {
   if (currentView === 'Menu items') return renderMenuView()
   if (currentView === 'Customers') return renderCustomersView()
   if (currentView === 'Transactions') return renderTransactionsView()
-  const { overview, khata, recent } = dashboard
+  const { overview, khata = [], recent = [] } = dashboard || fallbackDashboard
   const dueTotal = khata.reduce((sum, account) => sum + account.amount, 0)
   app.innerHTML = `
     <aside class="sidebar">
@@ -334,7 +342,8 @@ async function handleAdminLogin(event) {
     const response = await fetch(`${apiUrl}/api/admin/login`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email: formData.get('email'), password: formData.get('password') }) })
     if (!response.ok) throw new Error('Invalid admin email or password')
     adminToken = (await response.json()).token
-    dashboard = await (await fetch(`${apiUrl}/api/dashboard`, { headers: { Authorization: `Bearer ${adminToken}` } })).json()
+    const dashboardResponse = await fetch(`${apiUrl}/api/dashboard`, { headers: { Authorization: `Bearer ${adminToken}` } })
+    dashboard = dashboardResponse.ok ? normalizeDashboard(await dashboardResponse.json()) : fallbackDashboard
     const menuResponse = await fetch(`${apiUrl}/api/menu`, { headers: { Authorization: `Bearer ${adminToken}` } })
     if (menuResponse.ok) menuItems = await menuResponse.json()
     currentRole = 'admin'
